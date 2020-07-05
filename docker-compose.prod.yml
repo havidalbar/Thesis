@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  server:
+    container_name: server_container
+    build: ./server
+    environment:
+      - IS_DEV=0
+    volumes:
+      - ./server/:/app
+    command: gunicorn server.main:app -b :8080 --worker-class aiohttp.worker.GunicornWebWorker --reload
+    restart: unless-stopped
+    networks:
+      - app-network
+  
+  webserver:
+    container_name: webserver_container
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile.prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - server
+
+networks:
+  app-network:
+    driver: bridge

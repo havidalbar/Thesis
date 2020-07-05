@@ -1,0 +1,10 @@
+aiohttp
+aiohttp_cors
+gunicorn
+lxml
+pandas
+xlrd
+xlwt
+pytest-aiohttp
+python-slugify
+Sastrawi
