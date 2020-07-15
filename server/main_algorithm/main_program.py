@@ -13,7 +13,7 @@ from typing import Dict, List, Set
 if __name__ == '__main__':
     mulai = time.time()
     pickle_filename: str = 'resources/vector_space_model.pickle'
-    vsm = VectorSpaceModel(200)
+    vsm = VectorSpaceModel(600)
     query = 'jalan allah'
     result_data_file = open(pickle_filename, 'rb')
     weight = pickle.load(result_data_file)
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     probability_term_same_cluster = weight.calculateTermInSameCluster(list_cluster)
     # print(probability_term_same_cluster)
 
-    #output
+    # # output
     # out = Output()
     # list_nomor_surat = [weight.get_data_model_output()[idx].get_nomor_surat() for idx in range(len(weight.get_data_model_output()))]
     # list_nomor_ayat = [weight.get_data_model_output()[idx].get_nomor_ayat() for idx in range(len(weight.get_data_model_output()))]

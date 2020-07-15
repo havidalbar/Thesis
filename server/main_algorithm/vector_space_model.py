@@ -6,7 +6,6 @@ from main_algorithm.data_model import DataModel
 from main_algorithm.preprocessing import Preprocessing
 from main_algorithm.file_utility import read_file_xlsx
 
-
 class VectorSpaceModel:
     def __init__(self, n_ayat, pickle_filename: str = 'resources/vector_space_model.pickle'):
         self.documents = []
@@ -83,7 +82,7 @@ class VectorSpaceModel:
 
     def indexing(self, query, cluster):
         query_vocab = []
-        for word in query.split():
+        for word in query.lower().split():
             if word not in query_vocab:
                 query_vocab.append(word)
 

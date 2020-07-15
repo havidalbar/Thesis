@@ -9,20 +9,20 @@ class Preprocessing:
         stopword_path: str = 'resources/stopword.txt'
         read_content: str = read_file_txt(stopword_path, splitter='\n')
         self.stopwords = read_content
-        self.punctuation_list = string.punctuation
 
     def case_folding(self,source):
         return source.lower()
 
     def cleaning(self,source):
+        punctuation_list = string.punctuation
         source_to_process = source.strip()
         result = ''
         source_last_char_index = len(source_to_process) - 1
         for i, char in enumerate(source_to_process):
-            if char in self.punctuation_list or char.isnumeric():
+            if char in punctuation_list or char.isnumeric():
                 if i != source_last_char_index:
                     next_char = source_to_process[i + 1]
-                    if (next_char not in self.punctuation_list and
+                    if (next_char not in punctuation_list and
                             not next_char.isnumeric() and next_char != ' '):
                         result += ' '
             else:
@@ -48,13 +48,11 @@ class Preprocessing:
         for sentence in raw_document:
             sentences.append(sentence)
             term.append(
-                self.filtering(
                 self.stemming(
                     self.filtering(
                         self.tokenisasi(
-                            self.case_folding(
-                                self.cleaning(sentence)
-                            )
+                            self.cleaning(
+                                self.case_folding(sentence)
                         )
                     )
                 )

@@ -29,9 +29,7 @@ def fcm_clustering(dataframe, class_count=4, w=2, max_iter=1000, error_threshold
     u = np.absolute(np.random.randn(data_count, class_count))
     for (row_index, row_u) in enumerate(u):
         u[row_index] = one_normalize(row_u)
-    # print()
-    # print('Matriks U Awal')
-    # print(u)
+
     uawal = u
     print()
     prev_obj_func_result = 0
@@ -54,46 +52,52 @@ def fcm_clustering(dataframe, class_count=4, w=2, max_iter=1000, error_threshold
                     for k_index, uik_element in enumerate(ui_power_w_array)
                 ]) / sum_of_ui_power_w_array
 
-
         for data_index in range(data_count):
             for class_index in range(class_count):
-                # mencari d kuadrat (d^1/2) dari sebuah data terhadap sebuah pusat cluster
-                d_square[data_index][class_index] = math.sqrt(sum([
-                    pow((dataframe.iloc[data_index][feature_index] - v[class_index][feature_index]) , 2)
+                # mencari d^1/2 dari sebuah data terhadap sebuah pusat cluster
+                d_square[data_index][class_index] = pow(sum([
+                    pow(dataframe.iloc[data_index][feature_index] - \
+                        v[class_index][feature_index], 2)
                     for feature_index in range(feature_count)
-                ]))
+                ]), 1 / 2)
 
         for data_index in range(data_count):
             for class_index in range(class_count):
                 # memperbaiki matriks U
                 new_u[data_index][class_index] = 1 / sum([
-                    pow(d_square[data_index][class_index] / d_square[data_index][j], 2 / (w - 1))
+                    pow(d_square[data_index][class_index] / \
+                        d_square[data_index][j], 2 / (w - 1))
                     for j in range(class_count)
                 ])
 
         # menghitung fungsi objektif
         obj_func_result = sum([
-            sum([pow(u[data_index][class_index], w) * pow(d_square[data_index][class_index],2) for data_index in range(data_count)])
+            sum([pow(u[data_index][class_index], w) * d_square[data_index][class_index] for data_index in
+                 range(data_count)])
             for class_index in range(class_count)
         ])
 
         # menghitung partition coeficiton
         partition_coefficient = 1/data_count * sum([
-            sum([pow(u[data_index][class_index], w) for data_index in range(data_count)])
+            sum([pow(u[data_index][class_index], w)
+                for data_index in range(data_count)])
             for class_index in range(class_count)
         ])
 
         # menghitung partition entropy
         partition_entropy = -1/data_count * sum([
-            sum([u[data_index][class_index] * math.log2(u[data_index][class_index]) for data_index in range(data_count)])
+            sum([u[data_index][class_index] * math.log2(u[data_index][class_index])
+                for data_index in range(data_count)])
             for class_index in range(class_count)
         ])
 
         # menghitung error
         error = abs(prev_obj_func_result - obj_func_result)
         if debug:
-            error_obj.append(f'iteration {current_iter}, obj. funct = {obj_func_result}, error = {error}')
-            print(f'iteration {current_iter}, obj. funct = {obj_func_result}, error = {error}')
+            error_obj.append(
+                f'iteration {current_iter}, obj. funct = {obj_func_result}, error = {error}')
+            print(
+                f'iteration {current_iter}, obj. funct = {obj_func_result}, error = {error}')
 
         # memperbarui variabel dalam iterasi
         current_iter += 1
@@ -103,25 +107,12 @@ def fcm_clustering(dataframe, class_count=4, w=2, max_iter=1000, error_threshold
 
     return u, partition_coefficient, partition_entropy, error_obj, uawal
 
-# def indexing(u):
-#     index_data = []
-#     for i,u_row in enumerate(u):
-#         max_prob = max(u_row)
-#         for j,uik in enumerate(u_row):
-#             if uik == max_prob:
-#                 index_data.append([i,(j+1)])
-#     return index_data
-
-# def get_documents(data_pickle: DataModel, indexes: Iterable, sort_result: bool = True):
-#     data: np.ndarray = np.asarray(data_pickle)
-#     print(data)
-#     print(indexes)
-#     return ([data[index] for index in sorted(indexes)])
 
 def Euclidean_distance(data1, data2):
     data1 = data1.drop('klaster')
     data2 = data2.drop('klaster')
     return np.sqrt(np.sum((data1-data2)**2))
+
 
 def silhouette(data):
     a = []
