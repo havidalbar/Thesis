@@ -10,7 +10,7 @@ def one_normalize(array_data):
     return result
 
 
-def fcm_clustering(dataframe, class_count=4, w=2, max_iter=1000, error_threshold=0.00001, debug=False):
+def fcm_clustering(dataframe, class_count=5, w=2, max_iter=1000, error_threshold=0.00001, debug=False):
     """
     Method ini merupakan method yang mengclusterkan data menggunakan konsep Fuzzy C-Means.
     :param dataframe: data masukan yang akan diclusterisasi dalam bentuk dataframe pandas

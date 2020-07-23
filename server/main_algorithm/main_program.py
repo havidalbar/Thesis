@@ -13,8 +13,8 @@ from typing import Dict, List, Set
 if __name__ == '__main__':
     mulai = time.time()
     pickle_filename: str = 'resources/vector_space_model.pickle'
-    vsm = VectorSpaceModel(600)
-    query = 'jalan allah'
+    vsm = VectorSpaceModel(40)
+    query = 'Allah'
     result_data_file = open(pickle_filename, 'rb')
     weight = pickle.load(result_data_file)
     result_data_file.close()

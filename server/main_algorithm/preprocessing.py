@@ -15,22 +15,21 @@ class Preprocessing:
 
     def cleaning(self,source):
         punctuation_list = string.punctuation
-        source_to_process = source.strip()
+        source = source.strip()
         result = ''
-        source_last_char_index = len(source_to_process) - 1
-        for i, char in enumerate(source_to_process):
-            if char in punctuation_list or char.isnumeric():
+        source_last_char_index = len(source) - 1
+        for i, char in enumerate(source):
+            if char in punctuation_list:
                 if i != source_last_char_index:
-                    next_char = source_to_process[i + 1]
-                    if (next_char not in punctuation_list and
-                            not next_char.isnumeric() and next_char != ' '):
+                    next_char = source[i + 1]
+                    if (next_char not in punctuation_list and next_char != ' '):
                         result += ' '
             else:
                 result += char
 
         return result
 
-    def tokenisasi(self,source):
+    def tokenization(self,source):
         return source.split()
 
     def filtering(self,source):
@@ -39,7 +38,7 @@ class Preprocessing:
     def stemming(self,source):
         factory = StemmerFactory()
         stemmer = factory.create_stemmer()
-        return [stemmer.stem(word) for word in source if word and word.isascii()]
+        return [stemmer.stem(word) for word in source if word.isascii()]
     
     def preprocessing(self, data_model):
         raw_document = [doc.get_tafsir() for doc in data_model]
@@ -50,7 +49,7 @@ class Preprocessing:
             term.append(
                 self.stemming(
                     self.filtering(
-                        self.tokenisasi(
+                        self.tokenization(
                             self.cleaning(
                                 self.case_folding(sentence)
                         )

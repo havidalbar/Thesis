@@ -19,9 +19,9 @@ class TestPreprocessing(unittest.TestCase):
         self.assertEqual(self.preprocessing.filtering(my_tokens), [
                          'menyebut', 'nama', 'Allah', 'maha', 'pemurah', 'maha','penyayang'])
 
-    def test_tokenisasi(self):
+    def test_tokenization(self):
         my_string: str = 'Dengan menyebut nama Allah Yang Maha Pemurah lagi Maha Penyayang'
-        self.assertEqual(self.preprocessing.tokenisasi(my_string), [
+        self.assertEqual(self.preprocessing.tokenization(my_string), [
                          'Dengan', 'menyebut', 'nama', 'Allah','Yang','Maha','Pemurah','lagi','Maha','Penyayang'])
 
     def test_stemming(self):

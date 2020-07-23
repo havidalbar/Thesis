@@ -13,13 +13,13 @@ class DataModel:
         self.cleaned: str = preprocess.cleaning(
             preprocess.case_folding(tafsir))
         self.filtering = preprocess.filtering(
-                preprocess.tokenisasi(
+                preprocess.tokenization(
                     self.cleaned
                 )
             )
         self.preprocessing: str = preprocess.stemming(
             preprocess.filtering(
-                preprocess.tokenisasi(
+                preprocess.tokenization(
                     preprocess.cleaning(
                         preprocess.case_folding(
                             tafsir)
