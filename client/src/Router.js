@@ -7,7 +7,7 @@ export default function AppRouter() {
         <Router>
             <Switch>
                 <Route path='/' exact component={LandingPage} />
-                <Route path='/:query/:page' component={LandingPage} />
+                <Route path='/:query/:page/:cluster' component={LandingPage} />
             </Switch>
         </Router>
     );

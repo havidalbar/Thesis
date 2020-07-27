@@ -33,13 +33,25 @@ def search(request: web.Request):
         query: str = request.query.get('q', '').strip()
         current_page: int = int(request.query.get('page', 1))
         page_size_limit: int = int(request.query.get('limit', 10))
-       
+        query_clust: int = int(request.query.get('cluster',''))
         evaluator_result = vsm.indexing(query, cluster)
-
-        result_docs: List[Dict[str, str]] = [vsm.get_result_documents()[0][idy].asdict(output_keys=['slug','nomor_ayat', 'nomor_surat', 'tafsir','cosine', 'cluster'],
-                                            cosine=vsm.get_result_documents()[1][idy],cluster=vsm.get_result_documents()[2][idy]) 
-                                            for idy in range(len(vsm.get_result_documents()[0]))]
-
+        clus = set(cluster)
+        print(clus)
+        
+        # result_docs: List[Dict[str, str]] = [vsm.get_result_documents()[0][idy].asdict(output_keys=['slug','nomor_ayat', 'nomor_surat', 'tafsir','cosine', 'cluster'],
+        #                                     cosine=vsm.get_result_documents()[1][idy],cluster=vsm.get_result_documents()[2][idy]) 
+        #                                     for idy in range(len(vsm.get_result_documents()[0])) if vsm.get_result_documents()[2][idy]==query_clust]
+        result_docs = []
+        if query_clust:
+            for idy in range(len(vsm.get_result_documents()[0])):
+                if vsm.get_result_documents()[2][idy]==query_clust:
+                    result_docs.append(vsm.get_result_documents()[0][idy].asdict(output_keys=['slug','nomor_ayat', 'nomor_surat', 'tafsir','cosine', 'cluster'],
+                                        cosine=vsm.get_result_documents()[1][idy],cluster=vsm.get_result_documents()[2][idy]))
+        else:
+            for idy in range(len(vsm.get_result_documents()[0])):
+                result_docs.append(vsm.get_result_documents()[0][idy].asdict(output_keys=['slug','nomor_ayat', 'nomor_surat', 'tafsir','cosine', 'cluster'],
+                                            cosine=vsm.get_result_documents()[1][idy],cluster=vsm.get_result_documents()[2][idy]))
+        
         total_result: int = len(result_docs)
         offset: int = (current_page - 1) * page_size_limit
         result_docs = result_docs[offset:current_page * page_size_limit]
@@ -48,6 +60,7 @@ def search(request: web.Request):
             "message": "Success!",
             "meta": {
                 "page": current_page,
+                "cluster": list(clus),
                 "size": len(result_docs),
                 "limit": page_size_limit,
                 "total": total_result

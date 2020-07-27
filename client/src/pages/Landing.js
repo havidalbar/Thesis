@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Tag, Input, Col, Row, Pagination, List, Avatar, Modal, notification } from 'antd';
+import { Tag, Input, Col, Row, Pagination, List, Modal, notification, Select } from 'antd';
 import { motion } from "framer-motion";
 import Axios from 'axios';
 import { CloseOutlined, CheckOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -9,44 +9,56 @@ const { location: { hostname } } = window;
 
 const getWindowDimensions = () => window.innerHeight;
 
-async function showDetail(slug) {
-    let { data } = await Axios.get(`http://${hostname}/api/detail/${slug}`);
-    Modal.info({
-        icon: ([]),
-        style: { top: 20 },
-        width: '70vw',
-        content: (
-            <div >
-                <div style={{ textAlign: 'center' }}>
-                    <h3>{data.data.nomor_ayat}</h3>
-                    <img style={{ width: '50vw', height: '30vh' }} />
-                </div>
-                <br />
-                <p style={{ textAlign: 'justify' }}
-                    dangerouslySetInnerHTML={{ __html: data.data.tafsir.replace(/\n+/g, '<br />') }} />
-            </div>
-        ),
-    });
-    setTimeout(() => document.getElementsByClassName('ant-modal-wrap')[0].scrollTo(0, 0), 100);
-}
+// async function showDetail(slug) {
+//     let { data } = await Axios.get(`http://${hostname}/api/detail/${slug}`);
+//     Modal.info({
+//         icon: ([]),
+//         style: { top: 20 },
+//         width: '70vw',
+//         content: (
+//             <div >
+//                 <div style={{ textAlign: 'center' }}>
+//                     <h3>{data.data.nomor_ayat}</h3>
+//                     <img style={{ width: '50vw', height: '30vh' }} />
+//                 </div>
+//                 <br />
+//                 <p style={{ textAlign: 'justify' }}
+//                     dangerouslySetInnerHTML={{ __html: data.data.tafsir.replace(/\n+/g, '<br />') }} />
+//             </div>
+//         ),
+//     });
+//     setTimeout(() => document.getElementsByClassName('ant-modal-wrap')[0].scrollTo(0, 0), 100);
+// }
 
 export default function Landing(props) {
     const [page, setPage] = useState(props.match.params.page);
     const { Search } = Input;
+    const { Option } = Select;
     const [height, setHeight] = useState(getWindowDimensions());
     const [xValue, setXValue] = useState(height * 50 / 100);
     const [data, setData] = useState({ data: [] });
-    const [query, setQuery] = useState(props.match.params.query);
+    // const [query, setQuery] = useState(props.match.params.query);
+    const [query, setQuery] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [irrelevantList, setIrrelevantList] = useState([]);
     const [prevQuery, setPrevQuery] = useState('');
+    const [cluster, setCluster] = useState(0);
 
     async function getQuery(value, page) {
         if (value) {
             try {
-                let { data } = await Axios.get(`http://${hostname}/api/search?q=${value}&page=${page}`);
+                let query = `http://${hostname}/api/search?q=${value}&page=${page}&cluster=${cluster}`;
+                let { data } = await Axios.get(query);
                 setData(data);
                 setPrevQuery(value);
+                if (!(Array.isArray(data.data) && data.data.length)) {
+                    notification.error({
+                        message: 'Query Error',
+                        description:
+                            'Hasil tidak ada',
+                        duration: 3,
+                    });
+                }
             }
             catch (e) {
                 notification.error({
@@ -89,7 +101,7 @@ export default function Landing(props) {
         }
         setSearchValue(props.match.params.query);
         getQuery(query, page);
-    }, [query, page])
+    }, [query, page, cluster])
 
     useEffect(() => {
         if (data.data.length) {
@@ -113,35 +125,53 @@ export default function Landing(props) {
                     y: xValue,
                     scale: 1,
                 }}
-                transition={{ type: 'spring', stiffness: 50 }}
-            >
-                <Row>
+                transition={{ type: 'spring', stiffness: 50 }}>
+                <Row gutter={24}>
                     <Col xs={2} sm={4} md={6} lg={8} />
                     <Col xs={20} sm={16} md={12} lg={8}>
-                        <Search
-                            placeholder="Cari ayat di sini..."
-                            enterButton="Search"
-                            size="large"
-                            value={searchValue}
-                            onChange={value => {
-                                setSearchValue(value.target.value);
-                            }}
-                            onSearch={value => {
-                                setQuery(value);
-                                if (value) {
-                                    if (value !== prevQuery) {
-                                        setIrrelevantList([]);
-                                        props.history.push(`/${value}/${1}`)
+                        <Input.Group compact>
+                            <Select
+                                defaultValue="Cluster"
+                                style={{ width: '100%' }}
+                                onChange={value => {
+                                    console.log('onchange dropdown',query);
+                                    setCluster(value);
+                                    setQuery(query);
+                                }}>
+                                <Option value='0'>Semua Cluster</Option>
+                                <Option value='1'>Cluster 1</Option>
+                                <Option value='2'>Cluster 2</Option>
+                                <Option value='3'>Cluster 3</Option>
+                                <Option value='4'>Cluster 4</Option>
+                                <Option value='5'>Cluster 5</Option>
+                            </Select>
+                            <Search
+                                placeholder="Cari ayat di sini..."
+                                enterButton="Search"
+                                size="large"
+                                value={searchValue}
+                                onChange={value => {
+                                    setSearchValue(value.target.value);
+                                    setQuery(query);
+                                }}
+                                onSearch={value => {
+                                    setCluster(cluster);
+                                    setQuery(value);
+                                    if (value) {
+                                        if (value !== prevQuery) {
+                                            setIrrelevantList([]);
+                                            props.history.push(`/${value}/${1}/${cluster}`)
+                                        }
+                                        props.history.push(`/${value}/${page}/${cluster}`)
                                     }
-                                    props.history.push(`/${value}/${page}`)
-                                }
-                                else {
-                                    props.history.push('/');
-                                    setXValue(height * 50 / 100);
-                                }
-                            }}
-                            autoFocus
-                        />
+                                    else {
+                                        props.history.push('/');
+                                        setXValue(height * 50 / 100);
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        </Input.Group>
                     </Col>
                     <Col xs={2} sm={4} md={6} lg={8} />
                 </Row>
@@ -201,7 +231,7 @@ export default function Landing(props) {
                                     setPage(page);
                                     document.body.scrollTop = 0;
                                     document.documentElement.scrollTop = 0;
-                                    props.history.push(`/${query}/${page}`)
+                                    props.history.push(`/${query}/${page}/${cluster}`)
                                 }} />
                             </div>
                         </Col>
