@@ -35,9 +35,6 @@ def search(request: web.Request):
         page_size_limit: int = int(request.query.get('limit', 10))
         query_clust: int = int(request.query.get('cluster',''))
         evaluator_result = vsm.indexing(query, cluster)
-        clus = set(cluster)
-        print(clus)
-        
         # result_docs: List[Dict[str, str]] = [vsm.get_result_documents()[0][idy].asdict(output_keys=['slug','nomor_ayat', 'nomor_surat', 'tafsir','cosine', 'cluster'],
         #                                     cosine=vsm.get_result_documents()[1][idy],cluster=vsm.get_result_documents()[2][idy]) 
         #                                     for idy in range(len(vsm.get_result_documents()[0])) if vsm.get_result_documents()[2][idy]==query_clust]
@@ -60,7 +57,6 @@ def search(request: web.Request):
             "message": "Success!",
             "meta": {
                 "page": current_page,
-                "cluster": list(clus),
                 "size": len(result_docs),
                 "limit": page_size_limit,
                 "total": total_result
