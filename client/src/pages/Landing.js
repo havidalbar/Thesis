@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Tag, Input, Col, Row, Pagination, List, Modal, notification, Select } from 'antd';
+import { Tag, Input, Col, Row, Pagination, List, notification, Select } from 'antd';
 import { motion } from "framer-motion";
 import Axios from 'axios';
 import { CloseOutlined, CheckOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -9,27 +9,6 @@ const { location: { hostname } } = window;
 
 const getWindowDimensions = () => window.innerHeight;
 
-// async function showDetail(slug) {
-//     let { data } = await Axios.get(`http://${hostname}/api/detail/${slug}`);
-//     Modal.info({
-//         icon: ([]),
-//         style: { top: 20 },
-//         width: '70vw',
-//         content: (
-//             <div >
-//                 <div style={{ textAlign: 'center' }}>
-//                     <h3>{data.data.nomor_ayat}</h3>
-//                     <img style={{ width: '50vw', height: '30vh' }} />
-//                 </div>
-//                 <br />
-//                 <p style={{ textAlign: 'justify' }}
-//                     dangerouslySetInnerHTML={{ __html: data.data.tafsir.replace(/\n+/g, '<br />') }} />
-//             </div>
-//         ),
-//     });
-//     setTimeout(() => document.getElementsByClassName('ant-modal-wrap')[0].scrollTo(0, 0), 100);
-// }
-
 export default function Landing(props) {
     const [page, setPage] = useState(props.match.params.page);
     const { Search } = Input;
@@ -37,7 +16,6 @@ export default function Landing(props) {
     const [height, setHeight] = useState(getWindowDimensions());
     const [xValue, setXValue] = useState(height * 50 / 100);
     const [data, setData] = useState({ data: [] });
-    // const [query, setQuery] = useState(props.match.params.query);
     const [query, setQuery] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [irrelevantList, setIrrelevantList] = useState([]);
@@ -134,7 +112,6 @@ export default function Landing(props) {
                                 defaultValue="Cluster"
                                 style={{ width: '100%' }}
                                 onChange={value => {
-                                    console.log('onchange dropdown',query);
                                     setCluster(value);
                                     setQuery(query);
                                 }}>
@@ -172,6 +149,7 @@ export default function Landing(props) {
                                 autoFocus
                             />
                         </Input.Group>
+
                     </Col>
                     <Col xs={2} sm={4} md={6} lg={8} />
                 </Row>
@@ -220,8 +198,8 @@ export default function Landing(props) {
                                     }}
                                 />
                                 <Row style={{ display: 'flex', width: '100%' }}>
-                                    {getScores(data.meta.total, irrelevantList.length).map(score => (
-                                        <Col flex={1} style={{ textAlign: 'center' }}>
+                                    {getScores(data.meta.total, irrelevantList.length).map((score,index) => (
+                                        <Col key={index} flex={1} style={{ textAlign: 'center' }}>
                                             <h4>{score.title}</h4>
                                             <h4>{score.value}</h4>
                                         </Col>
