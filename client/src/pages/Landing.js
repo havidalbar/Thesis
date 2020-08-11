@@ -16,11 +16,11 @@ export default function Landing(props) {
     const [height, setHeight] = useState(getWindowDimensions());
     const [xValue, setXValue] = useState(height * 50 / 100);
     const [data, setData] = useState({ data: [] });
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(props.match.params.query);
     const [searchValue, setSearchValue] = useState('');
     const [irrelevantList, setIrrelevantList] = useState([]);
     const [prevQuery, setPrevQuery] = useState('');
-    const [cluster, setCluster] = useState(0);
+    const [cluster, setCluster] = useState(props.match.params.cluster);
 
     async function getQuery(value, page) {
         if (value) {
@@ -125,6 +125,7 @@ export default function Landing(props) {
                             <Search
                                 placeholder="Cari ayat di sini..."
                                 enterButton="Search"
+                                style={{ color: 'black' }}
                                 size="large"
                                 value={searchValue}
                                 onChange={value => {
@@ -167,6 +168,7 @@ export default function Landing(props) {
                                 <h4 style={{ width: '100%' }}>Didapat {data.meta.total} hasil - {data.execution_time.toFixed(3)} detik</h4>
                                 <List
                                     itemLayout="horizontal"
+                                    style={{ color: 'black' }}
                                     dataSource={data.data}
                                     renderItem={(item, index) => {
                                         const { slug } = item;
@@ -174,7 +176,6 @@ export default function Landing(props) {
                                         return (
                                             <List.Item key={index}>
                                                 <List.Item.Meta
-                                                    // title={<a onClick={() => showDetail(item.slug)}>{item.slug}</a>}
                                                     title={<a>{item.slug}</a>}
                                                     description={<Row gutter={24}>
                                                         <Col sm={16} md={12}><p style={{ textAlign: 'justify' }}>{item.tafsir}</p></Col>
@@ -182,12 +183,12 @@ export default function Landing(props) {
                                                         <Col sm={4} md={4}><p style={{ textAlign: 'center' }}>{(item.cluster)}</p></Col>
                                                         <Col sm={4} md={4}>
                                                             <div style={{ textAlign: 'center' }}>
-                                                                {isIrrelevant && (<Tag icon={<CloseCircleOutlined />} color="error">
+                                                                {isIrrelevant && (<Tag icon={<CloseCircleOutlined style={{ color: 'red' }} />} color="error">
                                                                     Tidak Relevan
                                                                 </Tag>)}
                                                                 <a onClick={() => toggleRelevant(slug)}>
                                                                     <h5>Tandai {isIrrelevant ? 'Sebagai' : 'Tidak'} Relevan</h5>
-                                                                    {isIrrelevant ? <CheckOutlined /> : <CloseOutlined />}
+                                                                    {isIrrelevant ? <CheckOutlined style={{ color: 'blue' }} /> : <CloseOutlined style={{ color: 'red' }} />}
                                                                 </a>
                                                             </div>
                                                         </Col>
@@ -198,7 +199,7 @@ export default function Landing(props) {
                                     }}
                                 />
                                 <Row style={{ display: 'flex', width: '100%' }}>
-                                    {getScores(data.meta.total, irrelevantList.length).map((score,index) => (
+                                    {getScores(data.meta.total, irrelevantList.length).map((score, index) => (
                                         <Col key={index} flex={1} style={{ textAlign: 'center' }}>
                                             <h4>{score.title}</h4>
                                             <h4>{score.value}</h4>

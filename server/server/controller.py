@@ -62,19 +62,3 @@ def search(request: web.Request):
         })
     except:
         return web.json_response({"message": "Invalid Query!"}, status=422)
-
-
-@json_inject_execution_time
-def get_detail(request: web.Request):
-    vsm: VectorSpaceModel = load_model_pickle()
-    result: DataModel = vsm.get_document_by_slug(
-        request.match_info.get('slug', ''))
-
-    if result is None:
-        return web.json_response({"message": "Tafsir Not Found!"}, status=404)
-
-    return web.json_response({
-        "message": "Success!",
-        "data": result.asdict(output_keys=['nomor_ayat', 'nomor_surat', 'tafsir'])
-    })
-        
