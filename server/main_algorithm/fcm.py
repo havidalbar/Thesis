@@ -10,14 +10,16 @@ def one_normalize(array_data):
     return result
 
 
-def fcm_clustering(dataframe, class_count=5, w=2, max_iter=1000, error_threshold=0.00001, debug=False):
+def fcm_clustering(dataframe, class_count=4, w=2, max_iter=100, error_threshold=0.00001, debug=True):
     """
     Method ini merupakan method yang mengclusterkan data menggunakan konsep Fuzzy C-Means.
     :param dataframe: data masukan yang akan diclusterisasi dalam bentuk dataframe pandas
+    
     :param class_count: jumlah cluster yang diinginkan
     :param w: bilangan pemangkat (pembobot)
     :param max_iter: jumlah iterasi maksimal jika error tidak terpenuhi
     :param error_threshold: batas error yang
+    
     :param debug: boolean untuk menentukan mencetak hasil tiap iterasi
     :return: matriks U (list 2 dimensi) akhir setelah iterasi berhenti
     """
@@ -33,7 +35,9 @@ def fcm_clustering(dataframe, class_count=5, w=2, max_iter=1000, error_threshold
     uawal = u
     print()
     prev_obj_func_result = 0
-
+    v_list = []
+    d_list = []
+    u_all = []
     must_continue = True
     current_iter = 1
     while must_continue and current_iter <= max_iter:
@@ -51,6 +55,7 @@ def fcm_clustering(dataframe, class_count=5, w=2, max_iter=1000, error_threshold
                     uik_element * dataframe.iloc[k_index][feature_index]
                     for k_index, uik_element in enumerate(ui_power_w_array)
                 ]) / sum_of_ui_power_w_array
+        v_list.append(v)
 
         for data_index in range(data_count):
             for class_index in range(class_count):
@@ -60,19 +65,21 @@ def fcm_clustering(dataframe, class_count=5, w=2, max_iter=1000, error_threshold
                         v[class_index][feature_index], 2)
                     for feature_index in range(feature_count)
                 ]), 1 / 2)
+                
+        d_list.append(d_square)
 
         for data_index in range(data_count):
             for class_index in range(class_count):
                 # memperbaiki matriks U
                 new_u[data_index][class_index] = 1 / sum([
-                    pow(d_square[data_index][class_index] / \
-                        d_square[data_index][j], 2 / (w - 1))
+                    pow(d_square[data_index][class_index] / d_square[data_index][j], 2 / (w - 1))
                     for j in range(class_count)
                 ])
 
+        u_all.append(new_u)
         # menghitung fungsi objektif
         obj_func_result = sum([
-            sum([pow(u[data_index][class_index], w) * d_square[data_index][class_index] for data_index in
+            sum([pow(u[data_index][class_index], w) * pow(d_square[data_index][class_index],2) for data_index in
                  range(data_count)])
             for class_index in range(class_count)
         ])
@@ -105,7 +112,7 @@ def fcm_clustering(dataframe, class_count=5, w=2, max_iter=1000, error_threshold
         prev_obj_func_result = obj_func_result
         must_continue = prev_obj_func_result is None or error > error_threshold
 
-    return u, partition_coefficient, partition_entropy, error_obj, uawal
+    return u, partition_coefficient, partition_entropy, error_obj, uawal, class_count, w, max_iter, error_threshold, v_list, d_list, u_all
 
 
 def Euclidean_distance(data1, data2):

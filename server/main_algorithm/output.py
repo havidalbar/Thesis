@@ -110,7 +110,7 @@ class Output:
             self.row_number += 1
         self.row_number += 1
 
-    def write_doc_weighting(self,nd_title, term, tf, df, idf, tfidf):
+    def write_doc_weighting(self,nd_title, term, tf, df, idf, tfidf, tfidfnorm):
         self.row_number = 2
         self.column_number = 0
 
@@ -215,43 +215,97 @@ class Output:
             self.sheet2.write(self.row_number, self.column_number, element)
             self.column_number += 1
         self.row_number += 2
+        
+        
+                ##-----------------------------print tfidf----------------------------#
+        self.column_number = 0
+        self.row_number += 3
+        # print title tf
+        self.sheet2.write(self.row_number, self.column_number, "TFIDF")
+        self.row_number += 1
+
+        temp_row = self.row_number
+        # print no_surat & ayat
+        for row_title in nd_title:
+            for row_col in row_title:
+                self.sheet2.write(self.row_number, self.column_number, str(row_col))
+                self.row_number += 1
+            self.row_number = temp_row
+            self.column_number = 1
+
+        self.row_number -= 1
+        # # print term
+        self.column_number = 2
+        for element in term:
+            self.sheet2.write(self.row_number, self.column_number, element)
+            self.column_number += 1
+        self.row_number += 1
+
+        # print value tfidf
+        self.column_number = 2
+        for word_frequency in tfidfnorm:
+            for element in word_frequency:
+                self.sheet2.write(self.row_number, self.column_number, element)
+                self.column_number += 1
+            self.column_number = 2
+            self.row_number += 1
+
+        # print title df
+        self.column_number = 1
+        self.sheet2.write(self.row_number, self.column_number, "DF")
+        self.column_number += 1
+        # print value df
+        for element in df:
+            self.sheet2.write(self.row_number, self.column_number, element)
+            self.column_number += 1
+
+        self.row_number += 1
+        # print title idf
+        self.column_number = 1
+        self.sheet2.write(self.row_number, self.column_number, "IDF")
+        self.column_number += 1
+        # print value idf
+        for element in idf:
+            self.sheet2.write(self.row_number, self.column_number, element)
+            self.column_number += 1
+        self.row_number += 2
 
     def write_doc_clustering(self,nd_title, term, tfidf_norm, error_obj, cluster, probability, uawal, uakhir, silo):
         self.row_number = 2
         self.column_number = 0
 
-        #print title tfidf norm
-        self.sheet3.write(self.row_number, self.column_number, "TFIDF Normal")
-        self.row_number += 1
+        # #print title tfidf norm
+        # self.sheet3.write(self.row_number, self.column_number, "TFIDF Normal")
+        # self.row_number += 1
 
-        #print no_surat & ayat
-        for row_title in nd_title:
-            for row_col in row_title:
-                self.sheet3.write(self.row_number, self.column_number, str(row_col))
-                self.row_number +=1
-            self.row_number = 3
-            self.column_number = 1
+        # #print no_surat & ayat
+        # for row_title in nd_title:
+        #     for row_col in row_title:
+        #         self.sheet3.write(self.row_number, self.column_number, str(row_col))
+        #         self.row_number +=1
+        #     self.row_number = 3
+        #     self.column_number = 1
 
-        #print term
-        self.row_number = 2
-        self.column_number = 2
-        for element in term:
-            self.sheet3.write(self.row_number, self.column_number, element)
-            self.column_number += 1
+        # #print term
+        # self.row_number = 2
+        # self.column_number = 2
+        # for element in term:
+        #     self.sheet3.write(self.row_number, self.column_number, element)
+        #     self.column_number += 1
 
-        #print value tfidfnorm
-        self.row_number = 3
-        self.column_number = 2
-        for word_frequency in tfidf_norm:
-            for element in word_frequency:
-                self.sheet3.write(self.row_number, self.column_number, element)
-                self.column_number += 1
-            self.column_number = 2
-            self.row_number += 1
+        # #print value tfidfnorm
+        # self.row_number = 3
+        # self.column_number = 2
+        # for word_frequency in tfidf_norm:
+        #     for element in word_frequency:
+        #         self.sheet3.write(self.row_number, self.column_number, element)
+        #         self.column_number += 1
+        #     self.column_number = 2
+        #     self.row_number += 1
 
         ##-----------------------------print proses clustering----------------------------#
-        self.column_number = 0
-        self.row_number += 2
+        # self.column_number = 0
+        # self.row_number += 2
         # print title proses
         self.sheet3.write(self.row_number, self.column_number, "Proses Clustering")
         self.row_number += 1
@@ -320,69 +374,69 @@ class Output:
             self.sheet3.write(self.row_number, self.column_number, str(cluster[idx]))
             self.row_number += 1
 
-        self.row_number = temp_term
-        # # print term
-        self.column_number = 3
-        for element in term:
-            self.sheet3.write(self.row_number, self.column_number, element)
-            self.column_number += 1
-        self.row_number += 2
+        # self.row_number = temp_term
+        # # # print term
+        # self.column_number = 3
+        # for element in term:
+        #     self.sheet3.write(self.row_number, self.column_number, element)
+        #     self.column_number += 1
+        # self.row_number += 2
 
-        # print value tfidf
-        self.row_number -= 1
-        self.column_number = 3
-        for word_frequency in tfidf_norm:
-            for element in word_frequency:
-                self.sheet3.write(self.row_number, self.column_number, element)
-                self.column_number += 1
-            self.column_number = 3
-            self.row_number += 1
+        # # print value tfidf
+        # self.row_number -= 1
+        # self.column_number = 3
+        # for word_frequency in tfidf_norm:
+        #     for element in word_frequency:
+        #         self.sheet3.write(self.row_number, self.column_number, element)
+        #         self.column_number += 1
+        #     self.column_number = 3
+        #     self.row_number += 1
 
 
-        ##-----------------------------print hasil clustering----------------------------#
-        self.column_number = 0
-        self.row_number += 2
-        # print title tf
-        self.sheet3.write(self.row_number, self.column_number, "Probability Each Term in Same Cluster")
-        self.row_number += 1
-        self.column_number -= 1
+        # ##-----------------------------print hasil clustering----------------------------#
+        # self.column_number = 0
+        # self.row_number += 2
+        # # print title tf
+        # self.sheet3.write(self.row_number, self.column_number, "Probability Each Term in Same Cluster")
+        # self.row_number += 1
+        # self.column_number -= 1
 
-        # # print probability
-        list_term_sort = []
-        list_cluster_sort = []
-        list_prob_sort = []
-        for cluster, value in probability.items():
-            for term, probability in value.items():
-                if probability != 0.0:
-                    list_term_sort.append(term)
-                    list_cluster_sort.append(cluster)
-                    list_prob_sort.append(probability)
-        self.row_number += 1
-        # # print term
-        self.column_number = 0
-        self.sheet3.write(self.row_number, self.column_number, "Term")
+        # # # print probability
+        # list_term_sort = []
+        # list_cluster_sort = []
+        # list_prob_sort = []
+        # for cluster, value in probability.items():
+        #     for term, probability in value.items():
+        #         if probability != 0.0:
+        #             list_term_sort.append(term)
+        #             list_cluster_sort.append(cluster)
+        #             list_prob_sort.append(probability)
+        # self.row_number += 1
+        # # # print term
+        # self.column_number = 0
+        # self.sheet3.write(self.row_number, self.column_number, "Term")
 
-        self.column_number = 1
-        for element in list_term_sort:
-            self.sheet3.write(self.row_number, self.column_number, element)
-            self.column_number += 1
-        self.row_number += 1
+        # self.column_number = 1
+        # for element in list_term_sort:
+        #     self.sheet3.write(self.row_number, self.column_number, element)
+        #     self.column_number += 1
+        # self.row_number += 1
 
-        self.column_number = 0
-        self.sheet3.write(self.row_number, self.column_number, "Probability")
-        self.column_number = 1
-        for element in list_prob_sort:
-            self.sheet3.write(self.row_number, self.column_number, element)
-            self.column_number += 1
-        self.row_number += 1
+        # self.column_number = 0
+        # self.sheet3.write(self.row_number, self.column_number, "Probability")
+        # self.column_number = 1
+        # for element in list_prob_sort:
+        #     self.sheet3.write(self.row_number, self.column_number, element)
+        #     self.column_number += 1
+        # self.row_number += 1
 
-        self.column_number = 0
-        self.sheet3.write(self.row_number, self.column_number, "Cluster")
-        self.column_number = 1
-        for element in list_cluster_sort:
-            self.sheet3.write(self.row_number, self.column_number, element)
-            self.column_number += 1
-        self.row_number += 1
+        # self.column_number = 0
+        # self.sheet3.write(self.row_number, self.column_number, "Cluster")
+        # self.column_number = 1
+        # for element in list_cluster_sort:
+        #     self.sheet3.write(self.row_number, self.column_number, element)
+        #     self.column_number += 1
+        # self.row_number += 1
 
     def write_doc_information_retrieval(self,nd_title, term, tfidf_norm, docs, query):
         self.row_number = 2
