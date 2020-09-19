@@ -90,7 +90,7 @@ class Output:
         self.column_number = 0
         self.row_number += 3
         # print title stemming
-        self.sheet.write(self.row_number, self.column_number, "Filtering Stemming")
+        self.sheet.write(self.row_number, self.column_number, "Stemming")
         self.row_number += 1
 
         temp_row = self.row_number
@@ -270,13 +270,21 @@ class Output:
             self.column_number += 1
         self.row_number += 2
 
-    def write_doc_clustering(self,nd_title, term, tfidf_norm, error_obj, cluster, probability, uawal, uakhir, silo):
+    def write_doc_clustering(self,nd_title, term, tfidf_norm, error_obj, cluster, probability, uawal, uakhir, silo, random):
         self.row_number = 2
         self.column_number = 0
 
-        # #print title tfidf norm
-        # self.sheet3.write(self.row_number, self.column_number, "TFIDF Normal")
-        # self.row_number += 1
+        #print title tfidf norm
+        self.sheet3.write(self.row_number, self.column_number, "Random Awal")
+        self.row_number += 1
+
+        self.column_number = 2
+        for dt in random:
+            for el in dt:
+                self.sheet3.write(self.row_number, self.column_number, el)
+                self.column_number += 1
+            self.column_number = 2
+            self.row_number += 1
 
         # #print no_surat & ayat
         # for row_title in nd_title:
@@ -304,8 +312,8 @@ class Output:
         #     self.row_number += 1
 
         ##-----------------------------print proses clustering----------------------------#
-        # self.column_number = 0
-        # self.row_number += 2
+        self.column_number = 0
+        self.row_number += 2
         # print title proses
         self.sheet3.write(self.row_number, self.column_number, "Proses Clustering")
         self.row_number += 1

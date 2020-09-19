@@ -2,6 +2,7 @@ import numpy as np
 import math
 import pandas as pd
 from typing import Dict, List, Iterable, Set
+import copy
 from main_algorithm.data_model import DataModel
 
 
@@ -10,7 +11,7 @@ def one_normalize(array_data):
     return result
 
 
-def fcm_clustering(dataframe, class_count=4, w=2, max_iter=100, error_threshold=0.00001, debug=True):
+def fcm_clustering(dataframe, class_count=4, w=2, max_iter=100, error_threshold=0.001, debug=True):
     """
     Method ini merupakan method yang mengclusterkan data menggunakan konsep Fuzzy C-Means.
     :param dataframe: data masukan yang akan diclusterisasi dalam bentuk dataframe pandas
@@ -29,6 +30,7 @@ def fcm_clustering(dataframe, class_count=4, w=2, max_iter=100, error_threshold=
     error_obj = []
     # membuat matriks U random dengan jumlah probabilitas 1 tiap baris
     u = np.absolute(np.random.randn(data_count, class_count))
+    randomawal = copy.deepcopy(u)
     for (row_index, row_u) in enumerate(u):
         u[row_index] = one_normalize(row_u)
 
@@ -112,7 +114,7 @@ def fcm_clustering(dataframe, class_count=4, w=2, max_iter=100, error_threshold=
         prev_obj_func_result = obj_func_result
         must_continue = prev_obj_func_result is None or error > error_threshold
 
-    return u, partition_coefficient, partition_entropy, error_obj, uawal, class_count, w, max_iter, error_threshold, v_list, d_list, u_all
+    return u, partition_coefficient, partition_entropy, error_obj, uawal, class_count, w, max_iter, error_threshold, v_list, d_list, u_all, randomawal
 
 
 def Euclidean_distance(data1, data2):

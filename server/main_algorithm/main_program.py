@@ -22,7 +22,7 @@ if __name__ == '__main__':
     weight = pickle.load(result_data_file)
     result_data_file.close()
     df = pd.DataFrame(weight.normalisasi2d(weight.getTfIdf()), columns=weight.getFeatures())
-    u, partition_coefficient, partition_entropy, list_error_obj, uawal, class_count, w, max_iter, threshold, v, d, u_all = fcm_clustering(df, debug=True)
+    u, partition_coefficient, partition_entropy, list_error_obj, uawal, class_count, w, max_iter, threshold, v, d, u_all, randomawal = fcm_clustering(df, debug=True)
     # mencetak matriks U akhir
     print("Matriks U Akhir")
     print(u, "\n")
@@ -66,6 +66,7 @@ if __name__ == '__main__':
     results['u_awal'] = uawal.tolist()
     results['u_all'] = np.array(u_all).tolist()
     results['u_akhir'] = u.tolist()
+    results['randomawal'] = randomawal.tolist()
     results['error_obj'] = list_error_obj
     results['counter_cluster'] = count_cluster
     json.dump(results, open(f"resources/results-{class_count}-gabungan.json", "w"))
@@ -106,12 +107,12 @@ if __name__ == '__main__':
     # out.write_doc_clustering(tfidf_norm=weight.normalisasi2d(weight.getTfIdf()), nd_title=list_merge,
     #                          term=weight.getFeatures(), error_obj=list_error_obj,
     #                          cluster=list_cluster, probability=probability_term_same_cluster,
-    #                          uawal=uawal, uakhir=u, silo=silo)
+    #                          uawal=uawal, uakhir=u, silo=silo, random=randomawal)
 
     # out.write_doc_information_retrieval(tfidf_norm=weight.normalisasi2d(weight.getTfIdf()), nd_title=list_merge,
     #                                     term=weight.getFeatures(),docs=weight.get_doc_output(), query=query)
 
-    # out.save("resources/outputSurahPendekCek2.xls")
+    # out.save("resources/outputSurahCekFix.xls")
     print("Eksekusi Selama",time.time()-mulai)
 
 
