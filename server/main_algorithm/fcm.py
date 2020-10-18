@@ -1,7 +1,6 @@
 import numpy as np
 import math
 import pandas as pd
-from typing import Dict, List, Iterable, Set
 import copy
 from main_algorithm.data_model import DataModel
 
@@ -11,7 +10,7 @@ def one_normalize(array_data):
     return result
 
 
-def fcm_clustering(dataframe, class_count=2, w=2, max_iter=100, error_threshold=0.01, debug=True):
+def fcm_clustering(dataframe, class_count=2, w=2, max_iter=3, error_threshold=0.001, debug=True):
     """
     Method ini merupakan method yang mengclusterkan data menggunakan konsep Fuzzy C-Means.
     :param dataframe: data masukan yang akan diclusterisasi dalam bentuk dataframe pandas
@@ -40,6 +39,8 @@ def fcm_clustering(dataframe, class_count=2, w=2, max_iter=100, error_threshold=
     v_list = []
     d_list = []
     u_all = []
+    pc_all = []
+    pe_all = []
     must_continue = True
     current_iter = 1
     while must_continue and current_iter <= max_iter:
@@ -92,6 +93,7 @@ def fcm_clustering(dataframe, class_count=2, w=2, max_iter=100, error_threshold=
                 for data_index in range(data_count)])
             for class_index in range(class_count)
         ])
+        pc_all.append(partition_coefficient)
 
         # menghitung partition entropy
         partition_entropy = -1/data_count * sum([
@@ -99,6 +101,7 @@ def fcm_clustering(dataframe, class_count=2, w=2, max_iter=100, error_threshold=
                 for data_index in range(data_count)])
             for class_index in range(class_count)
         ])
+        pe_all.append(partition_entropy)
 
         # menghitung error
         error = abs(prev_obj_func_result - obj_func_result)
@@ -114,7 +117,7 @@ def fcm_clustering(dataframe, class_count=2, w=2, max_iter=100, error_threshold=
         prev_obj_func_result = obj_func_result
         must_continue = prev_obj_func_result is None or error > error_threshold
 
-    return u, partition_coefficient, partition_entropy, error_obj, uawal, class_count, w, max_iter, error_threshold, v_list, d_list, u_all, randomawal
+    return u, pc_all, pe_all, error_obj, uawal, class_count, w, max_iter, error_threshold, v_list, d_list, u_all, randomawal
 
 
 def Euclidean_distance(data1, data2):

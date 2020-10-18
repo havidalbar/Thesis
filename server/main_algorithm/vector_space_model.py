@@ -79,7 +79,7 @@ class VectorSpaceModel:
                 element / divider for element in row]
 
         return transposed_weighting_2d_array
-
+    
     def indexing(self, query, cluster):
         query_vocab = []
         for word in query.lower().split():
@@ -90,6 +90,8 @@ class VectorSpaceModel:
         tf_idf = self.normalisasi2d(self.getTfIdf())
         list_index = [self.getFeatures().index(word)
                                        for word in query_vocab if word in self.getFeatures()]
+        query_wc = np.array([self.getIdf()[value] * query_wc[idx] for idx, value in enumerate(list_index)])
+        query_wc = query_wc / math.sqrt(sum(pow(query_wc,2)))
         relevance_scores = {}
         for doc_id in range(len(self.data_model)):
             cosine = 0
@@ -161,7 +163,8 @@ class VectorSpaceModel:
                 counter_temp[key] = element.get(key, 0) / feature_counters.get(key, 0)
             result[keys] = counter_temp
 
-        return result
+        countAllTerm = Counter(np.hstack(self.documents))
+        return result, countAllTerm
     
     def get_document_by_slug(self, slug: str):
         for doc in self.data_model:

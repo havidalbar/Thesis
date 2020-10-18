@@ -1,6 +1,4 @@
 import string
-from collections import Counter,OrderedDict
-from typing import IO, Iterable, List, Set
 from main_algorithm.file_utility import read_file_txt
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 

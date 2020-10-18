@@ -42,6 +42,9 @@ if __name__ == '__main__':
     cluster_file.close()
     evaluator_result = weight.indexing(query, list_cluster)
     
+    probability_term_same_cluster, count_all_term = weight.calculateTermInSameCluster(list_cluster)
+    # print(probability_term_same_cluster)
+    
     df['klaster'] = list_cluster
     count_cluster = Counter(list_cluster)
     print(count_cluster)
@@ -54,8 +57,8 @@ if __name__ == '__main__':
     results['w'] = w
     results['max_iterasi'] = max_iter
     results['threshold'] = threshold
-    results['partition_coefficient'] = partition_coefficient
-    results['partition_entropy'] = partition_entropy
+    results['partition_coefficient'] = np.array(partition_coefficient).tolist()
+    results['partition_entropy'] = np.array(partition_entropy).tolist()
     results['features'] = weight.getFeatures()
     results['tf'] = weight.getTf()
     results['idf'] = weight.getIdf()
@@ -69,6 +72,8 @@ if __name__ == '__main__':
     results['randomawal'] = randomawal.tolist()
     results['error_obj'] = list_error_obj
     results['counter_cluster'] = count_cluster
+    results['count_all_term'] = count_all_term
+    results['probability_term_same_cluster'] = probability_term_same_cluster
     json.dump(results, open(f"resources/results-{class_count}-gabungan.json", "w"))
     
     # probability_term_same_cluster = weight.calculateTermInSameCluster(list_cluster)
