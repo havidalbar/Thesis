@@ -7,7 +7,7 @@ from main_algorithm.preprocessing import Preprocessing
 from main_algorithm.file_utility import read_file_xlsx
 
 class VectorSpaceModel:
-    def __init__(self, n_ayat, pickle_filename: str = 'resources/vector_space_model_surah_gabungan.pickle'):
+    def __init__(self, n_ayat, pickle_filename: str = 'resources/vector_space_model_surah_alfatihah_tanpa_filter.pickle'):
         self.documents = []
         self.features = []
         self.tf = [[]]
@@ -24,7 +24,7 @@ class VectorSpaceModel:
 
     def extract_documents(self, n_ayat):
         result: List[DataModel] = []
-        alquran_path: str = 'resources/surahGabungan.xlsx'
+        alquran_path: str = 'resources/surahAlFatihah.xlsx'
         sentences: str = read_file_xlsx(alquran_path)
         for i, element in enumerate(sentences.iloc[0:n_ayat, :3].values):
             result.append(

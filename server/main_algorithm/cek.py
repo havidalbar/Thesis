@@ -15,20 +15,21 @@ from typing import Dict, List, Set
 
 if __name__ == '__main__':
     mulai = time.time()
-    # file_name = "resources/results-4-gabungan"
-    # full_file = open(f"{file_name}.json")
-    # full_data = json.loads(full_file.read())
+    file_name = "resources/explore/albaqarah/klaster/7high/results-7-AlBaqarah"
+    full_file = open(f"{file_name}.json")
+    full_data = json.loads(full_file.read())
     # print(full_data['count_all_term'])
     # lists = sorted(full_data['count_all_term'].items())
     # x, y = zip(*lists)
     # plt.plot(x, y)
     # plt.show()
-    # query = 'Sembah Allah Allah'
-    # pickle_filename: str = 'resources/vector_space_model_surah_cek.pickle'
-    # pickle_filename_cluster = 'resources/clusterSurahCek.pickle'
-    # cluster_file = open(pickle_filename_cluster, 'rb')
-    # list_cluster = pickle.load(cluster_file)
-    # cluster_file.close()
+    query = 'Sembah Allah Allah'
+    pickle_filename: str = 'resources/explore/albaqarah/klaster/7high/vector_space_model_surah_albaqarah.pickle'
+    pickle_filename_cluster = 'resources/explore/albaqarah/klaster/7high/clusterSurahAlBaqarah.pickle'
+    cluster_file = open(pickle_filename_cluster, 'rb')
+    list_cluster = pickle.load(cluster_file)
+    indeks = [i for i in range(286)]
+    cluster_file.close()
     # result_data_file = open(pickle_filename, 'rb')
     # weight = pickle.load(result_data_file)
     # result_data_file.close()
@@ -40,5 +41,10 @@ if __name__ == '__main__':
     # print(count_cluster)
     # df = df.sort_values(by=['klaster'])
     # silo = silhouette(df)
-    # print(list_cluster)
+    cek = np.argsort(list_cluster)
+    res = {}
+    list_cluster_res = []
+    print(list_cluster)
+    for i in cek:
+        print(i, list_cluster[i])
     print("Eksekusi Selama",time.time()-mulai)

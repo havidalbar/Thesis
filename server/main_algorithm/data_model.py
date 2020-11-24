@@ -18,14 +18,14 @@ class DataModel:
                 )
             )
         self.preprocessing: str = preprocess.stemming(
-            preprocess.filtering(
+            # preprocess.filtering(
                 preprocess.tokenization(
                     preprocess.cleaning(
                         preprocess.case_folding(
                             tafsir)
                     )
                 )
-            )
+            # )
         )
 
     def get_slug(self):

@@ -46,13 +46,13 @@ class Preprocessing:
             sentences.append(sentence)
             term.append(
                 self.stemming(
-                    self.filtering(
+                    # self.filtering(
                         self.tokenization(
                             self.cleaning(
                                 self.case_folding(sentence)
                         )
                     )
-                )
+                # )
             )
             )
         return term, sentences

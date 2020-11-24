@@ -15,8 +15,11 @@ from typing import Dict, List, Set
 
 if __name__ == '__main__':
     mulai = time.time()
-    pickle_filename: str = 'resources/vector_space_model_surah_gabungan.pickle'
-    vsm = VectorSpaceModel(1034)
+    pickle_filename: str = 'resources/vector_space_model_surah_alfatihah_tanpa_filter.pickle'
+    # vsm = VectorSpaceModel(1034)
+    # vsm = VectorSpaceModel(285)
+    # vsm = VectorSpaceModel(30)
+    vsm = VectorSpaceModel(7)
     query = 'Allah'
     result_data_file = open(pickle_filename, 'rb')
     weight = pickle.load(result_data_file)
@@ -36,7 +39,7 @@ if __name__ == '__main__':
             if uik == max_prob:
                 list_cluster.append(j + 1)
     print()
-    pickle_filename_cluster = 'resources/clusterSurahGabungan.pickle'
+    pickle_filename_cluster = 'resources/clusterSurahAlFatihahTanpaFilter.pickle'
     cluster_file = open(pickle_filename_cluster, 'wb')
     pickle.dump(list_cluster, cluster_file)
     cluster_file.close()
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     results['counter_cluster'] = count_cluster
     results['count_all_term'] = count_all_term
     results['probability_term_same_cluster'] = probability_term_same_cluster
-    json.dump(results, open(f"resources/results-{class_count}-gabungan.json", "w"))
+    json.dump(results, open(f"resources/results-{class_count}-AlFatihahTanpaFilter.json", "w"))
     
     # probability_term_same_cluster = weight.calculateTermInSameCluster(list_cluster)
     # print(probability_term_same_cluster)
