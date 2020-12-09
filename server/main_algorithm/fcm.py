@@ -1,7 +1,7 @@
+import copy
+import pandas as pd
 import numpy as np
 import math
-import pandas as pd
-import copy
 from main_algorithm.data_model import DataModel
 
 
@@ -10,7 +10,7 @@ def one_normalize(array_data):
     return result
 
 
-def fcm_clustering(dataframe, class_count=7, w=2, max_iter=1, error_threshold=0.001, debug=True):
+def fcm_clustering(dataframe, class_count=2, w=2, max_iter=3, error_threshold=0.00001, debug=True):
     """
     Method ini merupakan method yang mengclusterkan data menggunakan konsep Fuzzy C-Means.
     :param dataframe: data masukan yang akan diclusterisasi dalam bentuk dataframe pandas
@@ -120,46 +120,55 @@ def fcm_clustering(dataframe, class_count=7, w=2, max_iter=1, error_threshold=0.
     return u, pc_all, pe_all, error_obj, uawal, class_count, w, max_iter, error_threshold, v_list, d_list, u_all, randomawal
 
 
-def Euclidean_distance(data1, data2):
-    data1 = data1.drop('klaster')
-    data2 = data2.drop('klaster')
-    return np.sqrt(np.sum((data1-data2)**2))
+def silhouette_coef(data):
+    list_ai = []
+    list_bi = []
 
-
-def silhouette(data):
-    a = []
-    b = []
-
-    for i, row1 in data.iterrows():
-        sum_b = {}
-        count_a = 0
-        sum_a = 0
-        count_b = {}
-        for j, row2 in data.iterrows():
-            if row1.klaster == row2.klaster:
-                count_a = count_a + 1
-                sum_a += Euclidean_distance(row1, row2)
+    for i, data1 in data.iterrows():
+        suma = 0
+        counta = 0
+        dict_sumb = {}
+        dict_countb = {}
+        for j, data2 in data.iterrows():
+            if data1.klaster == data2.klaster:
+                counta = counta + 1
+                cp_data1 = copy.deepcopy(data1)
+                cp_data1 = cp_data1.drop('klaster')
+                cp_data2 = copy.deepcopy(data2)
+                cp_data2 = cp_data2.drop('klaster')
+                suma += euclidean_distance(cp_data1, cp_data2)
             else:
-                klaster = row2.klaster
-                if klaster in sum_b:
-                    sum_b[klaster] += Euclidean_distance(row1, row2)
-                    count_b[klaster] += 1
+                klaster = data2.klaster
+                if klaster in dict_sumb:
+                    cp_data1 = copy.deepcopy(data1)
+                    cp_data1 = cp_data1.drop('klaster')
+                    cp_data2 = copy.deepcopy(data2)
+                    cp_data2 = cp_data2.drop('klaster')
+                    dict_sumb[klaster] += euclidean_distance(cp_data1, cp_data2)
+                    dict_countb[klaster] += 1
                 else:
-                    sum_b[klaster] = Euclidean_distance(row1, row2)
-                    count_b[klaster] = 1
-        for key in sum_b:
-            sum_b[key] = sum_b[key]/count_b[key]
-        b.append((sum_b[min(sum_b, key=sum_b.get)]))
-        a.append(1/(count_a - 1) * sum_a)
+                    cp_data1 = copy.deepcopy(data1)
+                    cp_data1 = cp_data1.drop('klaster')
+                    cp_data2 = copy.deepcopy(data2)
+                    cp_data2 = cp_data2.drop('klaster')
+                    dict_sumb[klaster] = euclidean_distance(cp_data1, cp_data2)
+                    dict_countb[klaster] = 1
+        for key in dict_sumb:
+            dict_sumb[key] = dict_sumb[key]/dict_countb[key]
+        list_ai.append(1/(counta - 1) * suma)
+        list_bi.append((dict_sumb[min(dict_sumb, key=dict_sumb.get)]))
 
-    sil = (np.array(b)-np.array(a))/np.maximum(np.array(a), np.array(b))
-    dict_sil = {}
-    for i in range(len(sil)):
+    silhouette = (np.array(list_bi)-np.array(list_ai))/np.maximum(np.array(list_ai), np.array(list_bi))
+    dict_silhouette = {}
+    for i in range(len(silhouette)):
         klaster = data.klaster[i]
-        if klaster in dict_sil:
-            dict_sil[klaster] += sil[i]
+        if klaster in dict_silhouette:
+            dict_silhouette[klaster] += silhouette[i]
         else:
-            dict_sil[klaster] = sil[i]
-    count = data["klaster"].value_counts()
-    score = [dict_sil[key]/count[key] for key in dict_sil]
-    return np.average(score)
+            dict_silhouette[klaster] = silhouette[i]
+    cluster_count = data["klaster"].value_counts()
+    silhouette_score = [dict_silhouette[key]/cluster_count[key] for key in dict_silhouette]
+    return np.average(silhouette_score)
+
+def euclidean_distance(data1, data2):
+    return np.sqrt(np.sum(pow((data1-data2),2)))

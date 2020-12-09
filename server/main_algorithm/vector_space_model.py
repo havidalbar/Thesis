@@ -1,7 +1,8 @@
-import math
+import math as mth
 import pickle
-import numpy as np
-from collections import OrderedDict, Counter
+import numpy as npy
+from collections import OrderedDict
+from collections import Counter
 from main_algorithm.data_model import DataModel
 from main_algorithm.preprocessing import Preprocessing
 from main_algorithm.file_utility import read_file_xlsx
@@ -50,13 +51,13 @@ class VectorSpaceModel:
         return self.df
 
     def getIdf(self):
-        self.idf = [math.log10(
+        self.idf = [mth.log10(
             len(termTfs) / sum(1 for tf in termTfs if tf > 0)) for termTfs in self.getTf()]
         return self.idf
 
     def getTfIdf(self):
         self.tf_idf = [
-            [(1 + math.log10(tf)) * idf if tf > 0 else tf for tf in termTfs]
+            [(1 + mth.log10(tf)) * idf if tf > 0 else tf for tf in termTfs]
             for termTfs, idf in zip(self.getTf(), self.getIdf())
         ]
         return self.tf_idf
@@ -68,13 +69,13 @@ class VectorSpaceModel:
 
     def normalisasi2d(self, weighting_2d_array):
         transposed_weighting_2d_array = [
-            [weighting_2d_array[j][i]
-                for j in range(len(weighting_2d_array))]
-            for i in range(len(weighting_2d_array[0]))
+            [weighting_2d_array[kolom][baris]
+                for kolom in range(len(weighting_2d_array))]
+            for baris in range(len(weighting_2d_array[0]))
         ]
 
         for i, row in enumerate(transposed_weighting_2d_array):
-            divider = math.sqrt(sum([math.pow(element, 2) for element in row]))
+            divider = mth.sqrt(sum([mth.pow(element, 2) for element in row]))
             transposed_weighting_2d_array[i] = [
                 element / divider for element in row]
 
@@ -82,22 +83,27 @@ class VectorSpaceModel:
     
     def indexing(self, query, cluster):
         query_vocab = []
-        for word in query.lower().split():
-            if word not in query_vocab:
-                query_vocab.append(word)
-
-        query_wc = [query.lower().split().count(word) for word in query_vocab]
-        tf_idf = self.normalisasi2d(self.getTfIdf())
-        list_index = [self.getFeatures().index(word)
-                                       for word in query_vocab if word in self.getFeatures()]
-        query_wc = np.array([self.getIdf()[value] * query_wc[idx] for idx, value in enumerate(list_index)])
-        query_wc = query_wc / math.sqrt(sum(pow(query_wc,2)))
         relevance_scores = {}
-        for doc_id in range(len(self.data_model)):
-            cosine = 0
-            for idx, idx_word in enumerate(list_index):
-                cosine += query_wc[idx] * tf_idf[doc_id][idx_word]
-            relevance_scores[doc_id] = cosine
+        if query.lower() == 'all':
+            for doc_id in range(len(self.data_model)):
+                relevance_scores[doc_id] = 0
+        else:
+            for word in query.lower().split():
+                if word not in query_vocab:
+                    query_vocab.append(word)
+
+            query_wc = [query.lower().split().count(word) for word in query_vocab]
+            tf_idf = self.normalisasi2d(self.getTfIdf())
+            list_index = [self.getFeatures().index(word)
+                                        for word in query_vocab if word in self.getFeatures()]
+            query_wc = npy.array([self.getIdf()[value] * query_wc[idx] for idx, value in enumerate(list_index)])
+            query_wc = query_wc / mth.sqrt(sum(pow(query_wc,2)))
+            # relevance_scores = {}
+            for doc_id in range(len(self.data_model)):
+                cosine = 0
+                for idx, idx_word in enumerate(list_index):
+                    cosine += query_wc[idx] * tf_idf[doc_id][idx_word]
+                relevance_scores[doc_id] = cosine
         sorted_value = OrderedDict(
             sorted(relevance_scores.items(), key=lambda x: x[1], reverse=True))
         top_all = {k: sorted_value[k] for k in list(
@@ -111,12 +117,16 @@ class VectorSpaceModel:
         self.data_clustering = temp
         for key, value in temp.items():
             temp_data_model.append(self.data_model[key])
-            if value != 0.0:
+            if query.lower() == 'all':
                 temp_result_model.append(self.data_model[key])
                 temp_cosine.append(value)
                 temp_cluster.append(cluster[key])
-        list_doc_sort = np.column_stack((temp_result_model, temp_cosine, temp_cluster))
-        list_doc_sort = np.array(sorted(list_doc_sort, key=lambda item: item[1], reverse=True))
+            elif value != 0.0 and query.lower() != 'all':
+                temp_result_model.append(self.data_model[key])
+                temp_cosine.append(value)
+                temp_cluster.append(cluster[key])
+        list_doc_sort = npy.column_stack((temp_result_model, temp_cosine, temp_cluster))
+        list_doc_sort = npy.array(sorted(list_doc_sort, key=lambda item: item[1], reverse=True))
         self.result_model = [[doc[0] for doc in list_doc_sort], [doc[1] for doc in list_doc_sort], [doc[2] for doc in list_doc_sort]]
         self.data_model_output = temp_data_model
         return self.result_model
@@ -139,7 +149,7 @@ class VectorSpaceModel:
         for key, value in self.data_clustering.items():
             temp_data_model.append(self.data_model[key])
             temp_cosine.append(value)
-        list_doc_sort = np.column_stack((temp_data_model, temp_cosine, list_cluster))
+        list_doc_sort = npy.column_stack((temp_data_model, temp_cosine, list_cluster))
         list_doc_sort = sorted(list_doc_sort, key=lambda item: item[1], reverse=True)
         self.list_doc_output = list_doc_sort
         dict_doc_sort = []
@@ -154,7 +164,7 @@ class VectorSpaceModel:
 
             cluster_counters[doc["cluster"]] += Counter(doc["term"])
             feature_list.append(doc["term"])
-        feature_counters = Counter(np.hstack(feature_list))
+        feature_counters = Counter(npy.hstack(feature_list))
 
         result = dict()
         for keys, element in cluster_counters.items():
@@ -163,7 +173,7 @@ class VectorSpaceModel:
                 counter_temp[key] = element.get(key, 0) / feature_counters.get(key, 0)
             result[keys] = counter_temp
 
-        countAllTerm = Counter(np.hstack(self.documents))
+        countAllTerm = Counter(npy.hstack(self.documents))
         return result, countAllTerm
     
     def get_document_by_slug(self, slug: str):

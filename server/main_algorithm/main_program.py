@@ -9,7 +9,7 @@ from main_algorithm.preprocessing import Preprocessing
 from main_algorithm.output import Output
 from collections import OrderedDict, Counter
 from main_algorithm.vector_space_model import VectorSpaceModel
-from main_algorithm.fcm import fcm_clustering, silhouette
+from main_algorithm.fcm import fcm_clustering, silhouette_coef
 from typing import Dict, List, Set
 
 
@@ -17,9 +17,9 @@ if __name__ == '__main__':
     mulai = time.time()
     pickle_filename: str = 'resources/vector_space_model_surah_albaqarah_tanpa_filter.pickle'
     # vsm = VectorSpaceModel(1034)
-    vsm = VectorSpaceModel(285)
+    # vsm = VectorSpaceModel(285)
     # vsm = VectorSpaceModel(30)
-    # vsm = VectorSpaceModel(7)
+    vsm = VectorSpaceModel(7)
     query = 'Allah'
     result_data_file = open(pickle_filename, 'rb')
     weight = pickle.load(result_data_file)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     count_cluster = Counter(list_cluster)
     print(count_cluster)
     df = df.sort_values(by=['klaster'])
-    silo = silhouette(df)
+    silo = silhouette_coef(df)
     print('sil', silo)
     results = {}
     results['klaster'] = class_count

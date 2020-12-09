@@ -31,12 +31,11 @@ class Preprocessing:
         return source.split()
 
     def filtering(self,source):
-        return [word for word in source if word not in self.stopwords]
+        return [w for w in source if w not in self.stopwords]
 
     def stemming(self,source):
-        factory = StemmerFactory()
-        stemmer = factory.create_stemmer()
-        return [stemmer.stem(word) for word in source if word.isascii()]
+        stemmerFactory = StemmerFactory().create_stemmer()
+        return [stemmerFactory.stem(w) for w in source if w.isascii()]
     
     def preprocessing(self, data_model):
         raw_document = [doc.get_tafsir() for doc in data_model]

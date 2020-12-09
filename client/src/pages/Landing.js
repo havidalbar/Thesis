@@ -121,6 +121,8 @@ export default function Landing(props) {
                                 <Option value='3'>Cluster 3</Option>
                                 <Option value='4'>Cluster 4</Option>
                                 <Option value='5'>Cluster 5</Option>
+                                <Option value='6'>Cluster 6</Option>
+                                <Option value='7'>Cluster 7</Option>
                             </Select>
                             <Search
                                 placeholder="Cari ayat di sini..."
